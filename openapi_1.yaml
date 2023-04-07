@@ -1,0 +1,165 @@
+openapi: 3.0.3
+info:
+  title: Color mixing - OpenAPI 3.0
+  description: |-
+    This is the documentation of the color mixing sample application we are implementing in this example.
+  version: "1.0"
+servers:
+  - url: http://localhost:8080
+tags:
+  - name: colors
+    description: Everything about colors
+
+paths:
+  /colors:
+    post:
+      tags:
+        - colors
+      summary: Add a new color to the store
+      description: Add a new solor to the store
+      operationId: addColor
+      requestBody:
+        description: Create a new color in the store
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Color'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Color'          
+        '405':
+          description: Invalid input
+          
+    get:
+      tags:
+        - colors
+      summary: List all colors
+      description: Returns all colors in the store
+      operationId: getColors
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ColorList'
+                
+  /colors/{colorName}:
+    get:
+      tags:
+        - colors
+      summary: Find color by name
+      description: Returns a single color
+      operationId: getColorByName
+      parameters:
+        - name: colorName
+          in: path
+          description: Name of color to return
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Color'
+        '400':
+          description: Invalid name supplied
+        '404':
+          description: Color not found
+    put:
+      tags:
+        - colors
+      summary: Update an existing color
+      description: Update an existing color by name
+      operationId: updateColor
+      parameters:
+        - name: colorName
+          in: path
+          description: Name of color to return
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Update an existent color in the store
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Color'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Color'          
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: Color not found
+        '405':
+          description: Validation exception
+    delete:
+      tags:
+        - colors
+      summary: Deletes a color
+      description: delete a color
+      operationId: deleteColor
+      parameters:
+        - name: colorName
+          in: path
+          description: Name of color to delete
+          required: true
+          schema:
+            type: string
+      responses:
+        '400':
+          description: Invalid color name
+
+components:
+  schemas:
+    Color:
+      type: object
+      required:
+        - name
+        - r
+        - g
+        - b
+      properties:
+        name:
+          description: Name of the color
+          type: string
+          maxLength: 32
+          example: red
+        r:
+          description: red component of color
+          type: integer
+          minimum: 0
+          maximum: 255
+          example: 255
+        g:
+          description: green component of color
+          type: integer
+          minimum: 0
+          maximum: 255
+          example: 0
+        b:
+          description: blue component of color
+          type: integer
+          minimum: 0
+          maximum: 255
+          example: 0
+          
+    ColorList:
+      description: List of color objects
+      type: array
+      items:
+        $ref: '#/components/schemas/Color'
